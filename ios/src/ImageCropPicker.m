@@ -171,7 +171,7 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
                 picker.cameraDevice = UIImagePickerControllerCameraDeviceFront;
             }
             
-            [[self getRootVC] presentViewController:picker animated:YES completion:nil];
+            [[self getRootVC] presentViewController:picker animated:NO completion:nil];
         });
     }];
 #endif
@@ -195,13 +195,13 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
                completion:^(NSDictionary* video) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (video == nil) {
-                    [picker dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+                    [picker dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
                         self.reject(ERROR_CANNOT_PROCESS_VIDEO_KEY, ERROR_CANNOT_PROCESS_VIDEO_MSG, nil);
                     }]];
                     return;
                 }
                 
-                [picker dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+                [picker dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
                     self.resolve(video);
                 }]];
             });
@@ -220,7 +220,7 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-    [picker dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+    [picker dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
         self.reject(ERROR_PICKER_CANCEL_KEY, ERROR_PICKER_CANCEL_MSG, nil);
     }]];
 }
@@ -357,7 +357,7 @@ RCT_EXPORT_METHOD(openPicker:(NSDictionary *)options
             }
             
             [imagePickerController setModalPresentationStyle: UIModalPresentationFullScreen];
-            [[self getRootVC] presentViewController:imagePickerController animated:YES completion:nil];
+            [[self getRootVC] presentViewController:imagePickerController animated:NO completion:nil];
         });
     }];
 }
@@ -546,7 +546,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                             if (video == nil) {
                                 [indicatorView stopAnimating];
                                 [overlayView removeFromSuperview];
-                                [imagePickerController dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+                                [imagePickerController dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
                                     self.reject(ERROR_CANNOT_PROCESS_VIDEO_KEY, ERROR_CANNOT_PROCESS_VIDEO_MSG, nil);
                                 }]];
                                 return;
@@ -559,7 +559,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                             if (processed == [assets count]) {
                                 [indicatorView stopAnimating];
                                 [overlayView removeFromSuperview];
-                                [imagePickerController dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+                                [imagePickerController dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
                                     self.resolve(selections);
                                 }]];
                                 return;
@@ -614,7 +614,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                         if (filePath == nil) {
                                             [indicatorView stopAnimating];
                                             [overlayView removeFromSuperview];
-                                            [imagePickerController dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+                                            [imagePickerController dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
                                                 self.reject(ERROR_CANNOT_SAVE_IMAGE_KEY, ERROR_CANNOT_SAVE_IMAGE_MSG, nil);
                                             }]];
                                             return;
@@ -649,7 +649,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                     
                                     [indicatorView stopAnimating];
                                     [overlayView removeFromSuperview];
-                                    [imagePickerController dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+                                    [imagePickerController dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
                                         self.resolve(selections);
                                     }]];
                                     return;
@@ -669,7 +669,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [indicatorView stopAnimating];
                         [overlayView removeFromSuperview];
-                        [imagePickerController dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+                        [imagePickerController dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
                             if (video != nil) {
                                 self.resolve(video);
                             } else {
@@ -713,7 +713,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
 }
 
 - (void)qb_imagePickerControllerDidCancel:(QBImagePickerController *)imagePickerController {
-    [imagePickerController dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+    [imagePickerController dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
         self.reject(ERROR_PICKER_CANCEL_KEY, ERROR_PICKER_CANCEL_MSG, nil);
     }]];
 }
@@ -724,7 +724,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
 - (void) processSingleImagePick:(UIImage*)image withExif:(NSDictionary*) exif withViewController:(UIViewController*)viewController withSourceURL:(NSString*)sourceURL withLocalIdentifier:(NSString*)localIdentifier withFilename:(NSString*)filename withCreationDate:(NSDate*)creationDate withModificationDate:(NSDate*)modificationDate {
     
     if (image == nil) {
-        [viewController dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+        [viewController dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
             self.reject(ERROR_PICKER_NO_DATA_KEY, ERROR_PICKER_NO_DATA_MSG, nil);
         }]];
         return;
@@ -746,7 +746,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
         ImageResult *imageResult = [self.compression compressImage:[image fixOrientation]  withOptions:self.options];
         NSString *filePath = [self persistFile:imageResult.data];
         if (filePath == nil) {
-            [viewController dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+            [viewController dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
                 self.reject(ERROR_CANNOT_SAVE_IMAGE_KEY, ERROR_CANNOT_SAVE_IMAGE_MSG, nil);
             }]];
             return;
@@ -754,7 +754,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
         
         // Wait for viewController to dismiss before resolving, or we lose the ability to display
         // Alert.alert in the .then() handler.
-        [viewController dismissViewControllerAnimated:YES completion:[self waitAnimationEnd:^{
+        [viewController dismissViewControlleranimated:NO completion:[self waitAnimationEnd:^{
             self.resolve([self createAttachmentResponse:filePath
                                                withExif:exif
                                           withSourceURL:sourceURL
@@ -777,19 +777,19 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
 - (void)dismissCropper:(UIViewController *)controller selectionDone:(BOOL)selectionDone completion:(void (^)(void))completion {
     switch (self.currentSelectionMode) {
         case CROPPING:
-            [controller dismissViewControllerAnimated:YES completion:completion];
+            [controller dismissViewControlleranimated:NO completion:completion];
             break;
         case PICKER:
             if (selectionDone) {
-                [controller.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:completion];
+                [controller.presentingViewController.presentingViewController dismissViewControlleranimated:NO completion:completion];
             } else {
                 // if user opened picker, tried to crop image, and cancelled cropping
                 // return him to the image selection instead of returning him to the app
-                [controller.presentingViewController dismissViewControllerAnimated:YES completion:completion];
+                [controller.presentingViewController dismissViewControlleranimated:NO completion:completion];
             }
             break;
         case CAMERA:
-            [controller.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:completion];
+            [controller.presentingViewController.presentingViewController dismissViewControlleranimated:NO completion:completion];
             break;
     }
 }
